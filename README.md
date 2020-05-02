@@ -30,7 +30,7 @@ python app.py
 
 4. A aplicação deverá estar disponivel em seu navegador no endereço: https://localhost:5001/swagger
 
-![GitHub Logo](/img/CapturarTela.png)
+![GitHub Logo](/img/Capturar.png)
 
 ### Extensões recomendadas para desenvolvimento no VSCODE
 
