@@ -1,8 +1,15 @@
 from flask import Flask, request
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
+from flask_jwt import JWT, jwt_required, current_identity
 from flask_swagger_ui import get_swaggerui_blueprint
+from security import authenticate, identity
 
 app = Flask (__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True # To allow flask propagating exception even if debug is set to false on app
+app.secret_key = 'jose'
+app.config.update(
+    JWT_AUTH_HEADER_PREFIX = 'Bearer'
+)
 api = Api(app)
 
 ### swagger specific ###
@@ -12,34 +19,65 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
     config={
-        'app_name': "Seans-Python-Flask-REST-Boilerplate",
+        'app_name': "FlaskApp",
         "openapi": "3.0.1"
     }
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ### end swagger specific ###
 
-items=[]
+jwt = JWT(app, authenticate, identity)
+
+items = []
 
 class Item(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('price',
+        type=float,
+        required=True,
+        help="This field cannot be left blank!"
+    )
+
+    @jwt_required()
     def get(self, name):
-        for item in items:
-            if item['name'] == name:
-                return item
-            return {'item':None},404
-    
-    def post(self,name):
-        data = request.get_json()
-        item = {'name':name, 'price':data['price']}
+        return {'item': next(filter(lambda x: x['name'] == name, items), None)}
+
+    @jwt_required()
+    def post(self, name):
+        if next(filter(lambda x: x['name'] == name, items), None) is not None:
+            return {'message': "An item with name '{}' already exists.".format(name)}
+
+        data = Item.parser.parse_args()
+
+        item = {'name': name, 'price': data['price']}
         items.append(item)
-        return item, 201
+        return item
+
+    @jwt_required()
+    def delete(self, name):
+        global items
+        items = list(filter(lambda x: x['name'] != name, items))
+        return {'message': 'Item deleted'}
+
+    @jwt_required()
+    def put(self, name):
+        data = Item.parser.parse_args()
+        # Once again, print something not in the args to verify everything works
+        item = next(filter(lambda x: x['name'] == name, items), None)
+        if item is None:
+            item = {'name': name, 'price': data['price']}
+            items.append(item)
+        else:
+            item.update(data)
+        return item
 
 class ItemList(Resource):
+    @jwt_required()
     def get(self):
         return {'items': items}
 
+api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
 
-api.add_resource(Item, '/item/<string:name>') # htttp://localhost:5000/student/Rolf
-api.add_resource(ItemList, '/items') # htttp://localhost:5000/student/Rolf
-
-app.run(port=5000,debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)  # important to mention debug=True
