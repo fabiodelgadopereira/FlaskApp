@@ -1,0 +1,5 @@
+flask_swagger_ui
+flask
+flask_jwt 
+flask_restful
+pyodbc

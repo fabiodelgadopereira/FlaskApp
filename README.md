@@ -16,19 +16,24 @@ Olá! Seja bem vindo ;)
 
 Este repositório contém um exemplo de APIs REST com Flask e Python.
 
-### Como executar essa aplicação?
+### Tendo o virtualenvwrapper instalado faça o seguinte
+
 ```shell
-MKDIR app
-cd app 
-pip install virtualenv 
-virtualenv env 
-C:\Users\user\Documents\app\env\Scripts\activate.bat 
-pip install Flask-RESTful
-code .
-python app.py
+git clone ...
+cd cadastro
+git checkout almost_perfect
+pip install -r requirements.txt
 ```
 
-4. A aplicação deverá estar disponivel em seu navegador no endereço: https://localhost:5001/swagger
+### Como executar essa aplicação?
+```shell
+python run.py
+# ou se quiser alterar a instancia de configuraçṍes
+python run.py production
+```
+
+
+4. A aplicação deverá estar disponivel em seu navegador no endereço: https://localhost:5000/swagger
 
 ![GitHub Logo](/img/Capturar.png)
 
