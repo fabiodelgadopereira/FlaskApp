@@ -34,9 +34,9 @@ python app.py
 
 ### Extensões recomendadas para desenvolvimento no VSCODE
 
-Python from Microsoft
-Python Docstring Generator from  Nils Werner
-Pyright from  ms-pyright
+- Python from Microsoft
+- Python Docstring Generator from  Nils Werner
+- Pyright from  ms-pyright
 
 ## Suporte
 
