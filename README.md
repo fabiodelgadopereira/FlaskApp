@@ -19,8 +19,8 @@ Este repositório contém um exemplo de APIs REST com Flask e Python utilizado S
 ### Tendo o virtualenvwrapper instalado faça o seguinte
 
 ```shell
-git clone ...
-cd cadastro
+git clone https://github.com/fabiodelgadopereira/FlaskApp
+cd FlaskApp
 git checkout almost_perfect
 pip install -r requirements.txt
 ```
