@@ -1,42 +1,16 @@
-from flask import Flask, request
+from flask import Flask, request, Blueprint
 from flask_restful import Api, Resource, reqparse
-from flask_jwt import JWT, jwt_required, current_identity
-from flask_swagger_ui import get_swaggerui_blueprint
 from threading import Lock
-from .security import authenticate, identity
 import logging
 from retry import retry
 from tenacity import *
 import pyodbc
 from ..db import db_connection
+from flask_jwt import JWT, jwt_required, current_identity
 
 app = Flask (__name__)
-app.config['PROPAGATE_EXCEPTIONS'] = True # To allow flask propagating exception even if debug is set to false on app
-app.secret_key = 'jose'
-app.config.update(
-    JWT_AUTH_HEADER_PREFIX = 'Bearer'
-)
-api = Api(app)
-
-### swagger specific ###
-SWAGGER_URL = '/swagger'
-API_URL = '../static/swagger.json'
 
 
-SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "FlaskApp",
-        "openapi": "3.0.1"
-    }
-)
-app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-### end swagger specific ###
-
-cliente_blueprint = app
-
-jwt = JWT(app, authenticate, identity)
 
 # Implement singleton to avoid global objects
 class ConnectionManager(object):    
@@ -138,6 +112,4 @@ class Customers(Queryable):
         result = self.executeQueryJson("[sp_Clientes_GetAllValues]")   
         return result, 200
     
-# Create API routes
-api.add_resource(Customer, '/api/cliente', '/api/cliente/<customer_id>')
-api.add_resource(Customers, '/api/clientes')
+

@@ -32,7 +32,7 @@ python run.py
 python run.py production
 ```
 
-4. A aplicação deverá estar disponivel em seu navegador no endereço: https://localhost:5000/swagger
+4. A aplicação deverá estar disponivel em seu navegador no endereço: http://localhost:5000/swagger
 
 ![GitHub Logo](/img/Capturar.png)
 
@@ -52,7 +52,23 @@ O Flask-RESTful é uma extensão do Flask que adiciona suporte para a criação 
 
 ![GitHub Logo](/img/estrutura.png)
 
-Os arquivos `.gitignore` e  `README.md`
+Os arquivos `.gitignore` e  `README.md` são arquivos para gerenciamento de arquivos e documentação de código, não vou entrar em detalhes neste artigo.
+
+A pasta `script` contém o código SQL utilizado para criar o banco de dados e as tabelas dessa aplicação, eles implementam boas práticas de log e execução de script.
+
+Este arquivo `requirements.txt` é usado para especificar quais pacotes python são necessários para executar o projeto que você está visualizando. Normalmente, o arquivo está localizado no diretório raiz do seu projeto. Quando um arquivo com esse nome é adicionado ao diretório raiz do projeto, ele é detectado automaticamente pela Python Integrated tools.
+
+`run.py` será o responsável por iniciar o servidor do Flask. Ele recebe por parâmetro o ambiente em que a aplicação será executada. Passando vazio (sem parâmetro) será executado em modo **development**, caso seja enviado production será executado em modo **production**
+
+Dentro da pasta cadastro estão localizados os principais arquivos da aplicação. No Flask, você tem rotas (URLs) definidas como  function decorators para a application ou blueprint; portanto, no arquivo `routes.py` é definido a funcionalidade para URLs diferentes.
+
+`db.py` contem as informações para conexão com o banco de dados.
+
+Gerenciar estes múltiplos ambientes requer acima de tudo muita disciplina, a Regra N.1 deverá ser seguida a risca, ou seja, NUNCA faça configurações no modo HARD CODED, sempre utilize variáveis de settings para coisas que se alteram entre diferentes ambientes e o arquivo `default_settings.py` armazena valores fixos para os diversos ambientes.
+
+As pastas `development_instance` e `production_instance` possuem versões diferentes do arquivo `config.cfg`. Esse arquivo armazenar os valores de variáveis dos diferentes ambientes da aplicação. É comum encontrar informações como nome da aplicação, porta, flags e caminhos de diretório.
+
+A pasta `Resource` possui o código fonte da aplicação. Esse conteúdo varia conforme escopo da aplicação.
 
 ## Swagger
 
@@ -155,7 +171,7 @@ if __name__ == '__main__':
     app.run()
 ```
 
-## SQL Server e ADO.NET e pyodbc
+## SQL Server e pyodbc
 
 Nessa implementação foi utilizado o pyodbc para manipulação da base de dados SQL Server através de store procedures.
 O pyodbc é um módulo Python de código aberto que simplifica o acesso aos bancos de dados ODBC. Ele implementa a especificação DB API 2.0, mas possui ainda mais conveniência Pythonic.
