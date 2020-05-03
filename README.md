@@ -62,7 +62,7 @@ Este arquivo `requirements.txt` é usado para especificar quais pacotes python s
 
 Dentro da pasta cadastro estão localizados os principais arquivos da aplicação. No Flask, você tem rotas (URLs) definidas como  function decorators para a application ou blueprint; portanto, no arquivo `routes.py` é definido a funcionalidade para URLs diferentes.
 
-`db.py` contem as informações para conexão com o banco de dados.
+`db.py` contém as informações para conexão com o banco de dados.
 
 Gerenciar estes múltiplos ambientes requer acima de tudo muita disciplina, a Regra N.1 deverá ser seguida a risca, ou seja, NUNCA faça configurações no modo HARD CODED, sempre utilize variáveis de settings para coisas que se alteram entre diferentes ambientes e o arquivo `default_settings.py` armazena valores fixos para os diversos ambientes.
 

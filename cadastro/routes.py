@@ -5,7 +5,7 @@ from .resources.cliente import Customer, Customers
 from flask_restful import Api
 from flask_swagger_ui import get_swaggerui_blueprint
 from .resources.security import authenticate, identity
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt import JWT
 
 
 def create_app(mode):
@@ -18,28 +18,24 @@ def create_app(mode):
     
     app.config.from_object('cadastro.default_settings')
     app.config.from_pyfile('config.cfg')
-    app.config['PROPAGATE_EXCEPTIONS'] = True # To allow flask propagating exception even if debug is set to false on app
-    app.secret_key = 'jose'
-    app.config.update(
-    JWT_AUTH_HEADER_PREFIX = 'Bearer'
-    )
+    app.secret_key = app.config['SECRET_KEY']
+
     jwt = JWT(app, authenticate, identity)
 
-    ### swagger specific ###
+    ### swagger implementacao ###
     SWAGGER_URL = '/swagger'
     API_URL = '/static/swagger.json'
-
 
     SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
         SWAGGER_URL,
         API_URL,
         config={
-            'app_name': "FlaskApp",
+            'app_name': app.config['APP_NAMME'],
             "openapi": "3.0.1"
         }
     )
     app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-    ### end swagger specific ###
+    ### fim da implementação do swagger ###
     
     api = Api(app)
     # Create API routes

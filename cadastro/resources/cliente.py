@@ -1,75 +1,15 @@
-from flask import Flask, request, Blueprint
-from flask_restful import Api, Resource, reqparse
-from threading import Lock
-import logging
-from retry import retry
-from tenacity import *
+from flask import Flask, request, current_app
+from flask_restful import  Resource
 import pyodbc
-from ..db import db_connection
-from flask_jwt import JWT, jwt_required, current_identity
+from ..db import ConnectionManager
+from flask_jwt import jwt_required
 
 app = Flask (__name__)
 
-
-
-# Implement singleton to avoid global objects
-class ConnectionManager(object):    
-    __instance = None
-    __connection = None
-    __lock = Lock()
-
-    def __new__(cls):
-        if ConnectionManager.__instance is None:
-            ConnectionManager.__instance = object.__new__(cls)        
-        return ConnectionManager.__instance       
-    
-    def __getConnection(self):
-        if (self.__connection == None):
-            self.__connection =   pyodbc.connect(db_connection)         
-        return self.__connection
-
-    def __removeConnection(self):
-        self.__connection = None
-
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(10), retry=retry_if_exception_type(pyodbc.OperationalError), after=after_log(app.logger, logging.DEBUG))
-    def executeQueryJSON(self, procedure, payload=None):
-        result = {}  
-        
-        try:
-            conn = self.__getConnection()
-            
-            cursor = conn.cursor()
-              
-            if payload:
-                cursor.execute(f"EXEC {procedure} "+ payload)
-            else:
-                cursor.execute(f"EXEC {procedure} ")
-
-            try:
-                result = [dict((cursor.description[i][0], value) \
-                    for i, value in enumerate(row)) for row in cursor.fetchall()]                           
-            except:
-                result = {}
-
-            cursor.commit()  
-
-        except pyodbc.OperationalError as e:            
-            app.logger.error(f"{e.args[1]}")
-            if e.args[0] == "08S01":
-                # If there is a "Communication Link Failure" error, 
-                # then connection must be removed
-                # as it will be in an invalid state
-                self.__removeConnection() 
-                raise                        
-        finally:
-            cursor.close()
-                            
-        return result
-
 class Queryable(Resource):
     def executeQueryJson(self, verb, payload=None):
-        result = {}  
-        procedure = f"[dbo].{verb}"
+        schema = current_app.config['SQLSERVER_SCHEMA'] 
+        procedure = f"{schema}.{verb}"
         result = ConnectionManager().executeQueryJSON(procedure, payload)
         return result
 
