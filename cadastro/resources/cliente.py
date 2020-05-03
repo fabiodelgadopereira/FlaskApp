@@ -4,7 +4,9 @@ from flask_jwt import JWT, jwt_required, current_identity
 from flask_swagger_ui import get_swaggerui_blueprint
 from threading import Lock
 from .security import authenticate, identity
-import json
+import logging
+from retry import retry
+from tenacity import *
 import pyodbc
 from ..db import db_connection
 
@@ -31,6 +33,7 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ### end swagger specific ###
+
 cliente_blueprint = app
 
 jwt = JWT(app, authenticate, identity)
@@ -54,7 +57,7 @@ class ConnectionManager(object):
     def __removeConnection(self):
         self.__connection = None
 
-   
+    @retry(stop=stop_after_attempt(3), wait=wait_fixed(10), retry=retry_if_exception_type(pyodbc.OperationalError), after=after_log(app.logger, logging.DEBUG))
     def executeQueryJSON(self, procedure, payload=None):
         result = {}  
         

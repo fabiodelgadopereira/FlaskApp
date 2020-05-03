@@ -3,3 +3,5 @@ flask
 flask_jwt 
 flask_restful
 pyodbc
+tenacity
+retry
