@@ -101,9 +101,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Clientes](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Nome] [nvarchar](80) NOT NULL,
+	[Nome] [nvarchar](200) NOT NULL,
 	[Cidade] [nvarchar](50) NOT NULL,
-	[Email] [nvarchar](80) NULL,
+	[Email] [nvarchar](200) NULL,
 	[Sexo] [nvarchar](10) NOT NULL
  CONSTRAINT [PK_Clientes] PRIMARY KEY CLUSTERED 
 (

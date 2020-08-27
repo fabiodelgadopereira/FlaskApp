@@ -5,3 +5,4 @@ flask_restful
 pyodbc
 tenacity
 retry
+coverage

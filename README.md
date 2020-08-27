@@ -9,19 +9,22 @@ Olá! Seja bem vindo ;)
 3. [Swagger](#Swagger)
 4. [JWT](#JWT)
 5. [SQL Server e pyodbc](#SQL-Server-e-pyodbc)
-6. [Publicação](#Publicação)
-7. [Suporte](#Suporte)
+6. [Testes unitários (unittest e coverage)](#Testes-unitrios-unittest-e-coverage))
+7. [Publicação](#Publicação)
+8. [Suporte](#Suporte)
 
 ## FlaskApp
 
 Este repositório contém um exemplo de APIs REST com Flask e Python utilizado SQL Server para armazenameto de dados
 
-### Tendo o virtualenvwrapper instalado faça o seguinte
+### Utilize os comandos abaixo para executar a aplicação:
 
 ```shell
 git clone https://github.com/fabiodelgadopereira/FlaskApp
 cd FlaskApp
 git checkout almost_perfect
+virtualenv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -214,6 +217,38 @@ while row:
     row = cursor.fetchone()
 ```
 
+## Testes unitários (unittest e coverage)
+
+Teste de unidade é toda a aplicação de teste nas assinaturas de entrada e saída de um sistema. Consiste em validar dados válidos e inválidos via I/O (entrada/saída) sendo aplicado por desenvolvedores ou analistas de teste. Uma unidade é a menor parte testável de um programa de computador. Em programação procedural, uma unidade pode ser uma função individual ou um procedimento. Idealmente, cada teste de unidade é independente dos demais, o que possibilita ao programador testar cada módulo isoladamente.
+O framework `unittest` foi originalmente inspirada por JUnit e tem semelhante com os principais frameworks de teste de unitários de outras linguagens. Ele suporta automação de teste, compartilhamento de configuração e código de desligamento para testes, agregação de testes em coleções e independência dos testes da estrutura de relatório.
+O `Coverage.py` é uma ferramenta para medir a cobertura de código de programas Python. Ele monitora seu programa, observando quais partes do código foram executadas e, em seguida, analisa a fonte para identificar o código que poderia ter sido executado, mas não foi. A medição da cobertura é normalmente usada para avaliar a eficácia dos testes. Ele pode mostrar quais partes do seu código estão sendo exercitadas por testes e quais não estão.
+
+> A maneira mais fácil de instalar é usar o pip:
+```shell
+pip install coverage
+```
+> Exemplo de implementação para testes
+```python
+import unittest
+import sys
+sys.path.append("..//cadastro//resources//")
+from user import User
+
+class TestSum(unittest.TestCase):
+
+    def test_sum(self):
+        c =   User(1, 'fabio', 'senha_teste')
+        self.assertEqual(c.username, "fabio", "Deveria ser Fabio")
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+> Para executar os teste navegue até a pasta tests e execute o comando abaixo:
+```shell
+coverage run -m unittest discover
+coverage report
+```
 
 ## Suporte
 
